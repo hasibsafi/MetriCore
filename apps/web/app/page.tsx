@@ -11,7 +11,6 @@ export default function HomePage() {
                 <p className="text-xs text-slate-500">Unified analytics for every site you manage</p>
               </div>
             </div>
-            <p className="text-xs text-slate-500">Unified analytics for every site you manage</p>
           </div>
           <div className="flex items-center gap-3">
             <a className="rounded-[10px] border border-slate-300 px-4 py-2 text-sm font-medium text-slate-900" href="/sign-in">
