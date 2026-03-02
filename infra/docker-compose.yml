@@ -1,0 +1,81 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: intoku
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - intoku_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d intoku"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/intoku
+      REDIS_URL: redis://redis:6379
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: change-me-in-env
+      AUTH_SECRET: change-me-in-env
+      GOOGLE_CLIENT_ID: placeholder-google-client-id
+      GOOGLE_CLIENT_SECRET: placeholder-google-client-secret
+      GOOGLE_INTEGRATION_CLIENT_ID: ${GOOGLE_INTEGRATION_CLIENT_ID:-}
+      GOOGLE_INTEGRATION_CLIENT_SECRET: ${GOOGLE_INTEGRATION_CLIENT_SECRET:-}
+      GOOGLE_OAUTH_STATE_SECRET: ${GOOGLE_OAUTH_STATE_SECRET:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+  worker:
+    build:
+      context: ..
+      dockerfile: apps/worker/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/intoku
+      REDIS_URL: redis://redis:6379
+      PAGESPEED_API_KEY: ${PAGESPEED_API_KEY:-}
+      GOOGLE_INTEGRATION_CLIENT_ID: ${GOOGLE_INTEGRATION_CLIENT_ID:-}
+      GOOGLE_INTEGRATION_CLIENT_SECRET: ${GOOGLE_INTEGRATION_CLIENT_SECRET:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+volumes:
+  intoku_postgres_data:

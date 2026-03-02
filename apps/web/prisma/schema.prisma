@@ -1,0 +1,317 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MembershipRole {
+  owner
+  admin
+  member
+  viewer
+}
+
+enum ScanRunType {
+  PAGESPEED_SCAN
+  GA4_SNAPSHOT
+  GSC_SNAPSHOT
+  BUILD_RECOMMENDATIONS
+  PING
+}
+
+enum ScanRunStatus {
+  queued
+  running
+  completed
+  failed
+}
+
+enum RecommendationImpact {
+  high
+  med
+  low
+}
+
+enum RecommendationPriority {
+  P0
+  P1
+  P2
+}
+
+enum RecommendationStatus {
+  open
+  done
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  isMetriCoreAdmin Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  memberships   Membership[]
+  auditLogs     AuditLog[]   @relation("AuditActor")
+  passwordResetTokens PasswordResetToken[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Organization {
+  id            String           @id @default(cuid())
+  name          String
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  memberships   Membership[]
+  sites         Site[]
+  auditLogs     AuditLog[]
+  scanRuns      ScanRun[]
+  pageSpeedRuns PageSpeedResult[]
+  ga4Snapshots  GA4Snapshot[]
+  gscSnapshots  GSCSnapshot[]
+  siteIntegrations SiteIntegration[]
+  recommendations Recommendation[]
+}
+
+model Membership {
+  id        String         @id @default(cuid())
+  orgId     String
+  userId    String
+  role      MembershipRole
+  createdAt DateTime       @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, userId])
+  @@index([orgId])
+  @@index([userId])
+}
+
+model Site {
+  id          String   @id @default(cuid())
+  orgId       String
+  url         String
+  displayName String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  organization   Organization     @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  scanRuns       ScanRun[]
+  ga4Snapshots   GA4Snapshot[]
+  gscSnapshots   GSCSnapshot[]
+  integrations   SiteIntegration?
+  recommendations Recommendation[]
+
+  @@unique([orgId, url])
+  @@index([orgId])
+}
+
+model SiteIntegration {
+  id            String   @id @default(cuid())
+  orgId         String
+  siteId        String   @unique
+  ga4PropertyId String?
+  gscSiteUrl    String?
+  googleRefreshToken   String?
+  googleTokenExpiresAt DateTime?
+  googleEmail          String?
+  connectedAt          DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  site         Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  orgId        String
+  actorUserId  String?
+  action       String
+  entityType   String
+  entityId     String?
+  metadataJson Json?
+  createdAt    DateTime @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  actorUser    User?        @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([orgId])
+  @@index([actorUserId])
+  @@index([orgId, createdAt])
+}
+
+model ScanRun {
+  id          String        @id @default(cuid())
+  orgId       String
+  siteId      String?
+  type        ScanRunType
+  status      ScanRunStatus @default(queued)
+  queuedAt    DateTime      @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  error       String?
+
+  organization Organization     @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  site         Site?            @relation(fields: [siteId], references: [id], onDelete: SetNull)
+  pageSpeedResult PageSpeedResult?
+
+  @@index([orgId])
+  @@index([siteId, startedAt(sort: Desc)])
+}
+
+model PageSpeedResult {
+  id               String   @id @default(cuid())
+  orgId            String
+  scanRunId        String   @unique
+  performanceScore Float?
+  lcpMs            Float?
+  cls              Float?
+  tbtMs            Float?
+  fcpMs            Float?
+  ttfbMs           Float?
+  desktopPerformanceScore Float?
+  desktopLcpMs            Float?
+  desktopCls              Float?
+  desktopTbtMs            Float?
+  desktopFcpMs            Float?
+  desktopTtfbMs           Float?
+  rawJson          Json
+  rawJsonDesktop   Json?
+  createdAt        DateTime @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  scanRun      ScanRun      @relation(fields: [scanRunId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+}
+
+model GA4Snapshot {
+  id           String   @id @default(cuid())
+  orgId        String
+  siteId       String
+  range        String
+  dateStart    DateTime
+  dateEnd      DateTime
+  sessions     Int
+  users        Int
+  topPagesJson Json?
+  createdAt    DateTime @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  site         Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([siteId, range, dateStart, dateEnd])
+  @@index([orgId])
+  @@index([orgId, siteId, range])
+}
+
+model GSCSnapshot {
+  id             String   @id @default(cuid())
+  orgId          String
+  siteId         String
+  range          String
+  dateStart      DateTime
+  dateEnd        DateTime
+  clicks         Int
+  impressions    Int
+  ctr            Float
+  position       Float
+  topQueriesJson Json?
+  topPagesJson   Json?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  site         Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([siteId, range, dateStart, dateEnd])
+  @@index([orgId])
+  @@index([orgId, siteId, range])
+}
+
+model Recommendation {
+  id           String                 @id @default(cuid())
+  orgId        String
+  siteId       String
+  category     String
+  title        String
+  description  String
+  impact       RecommendationImpact
+  priority     RecommendationPriority
+  status       RecommendationStatus   @default(open)
+  metadataJson Json?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  site         Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([siteId])
+  @@index([status])
+  @@index([priority])
+}
