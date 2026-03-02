@@ -4,7 +4,13 @@ export default function HomePage() {
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 py-12">
         <header className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
           <div>
-            <p className="text-sm font-semibold text-slate-900">MetriCore</p>
+            <div className="flex items-center gap-3">
+              <img src="/favicon-96x96.png" alt="MetriCore logo" className="h-9 w-9" />
+              <div>
+                <p className="text-sm font-semibold text-slate-900">MetriCore</p>
+                <p className="text-xs text-slate-500">Unified analytics for every site you manage</p>
+              </div>
+            </div>
             <p className="text-xs text-slate-500">Unified analytics for every site you manage</p>
           </div>
           <div className="flex items-center gap-3">
@@ -120,6 +126,18 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-6 text-xs text-slate-500">
+          <span>© 2026 MetriCore. All rights reserved.</span>
+          <div className="flex items-center gap-4">
+            <a className="hover:text-slate-900" href="/privacy-policy">
+              Privacy Policy
+            </a>
+            <a className="hover:text-slate-900" href="/terms-of-service">
+              Terms of Service
+            </a>
+          </div>
+        </footer>
       </div>
     </main>
   );
