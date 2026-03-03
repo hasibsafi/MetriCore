@@ -11,8 +11,8 @@ const callbackQuerySchema = z.object({
   error: z.string().trim().optional()
 });
 
-function buildRedirect(requestUrl: string, path: string, errorCode?: string) {
-  const url = new URL(path, requestUrl);
+function buildRedirect(baseUrl: string, path: string, errorCode?: string) {
+  const url = new URL(path, baseUrl);
   if (errorCode) {
     url.searchParams.set("googleError", errorCode);
   }
@@ -22,6 +22,7 @@ function buildRedirect(requestUrl: string, path: string, errorCode?: string) {
 
 export async function GET(request: Request) {
   let safeReturnTo = "/select-org";
+  const appUrl = process.env.APP_URL ?? request.url;
 
   try {
     const user = await requireSession();
@@ -33,24 +34,24 @@ export async function GET(request: Request) {
     });
 
     if (!parsed.state) {
-      return buildRedirect(request.url, "/select-org", "invalid_state");
+      return buildRedirect(appUrl, "/select-org", "invalid_state");
     }
 
     const state = verifyGoogleOauthState(parsed.state);
     safeReturnTo = sanitizeReturnTo(state.returnTo, state.orgId, state.siteId);
 
     if (state.userId !== user.id) {
-      return buildRedirect(request.url, safeReturnTo, "state_user_mismatch");
+      return buildRedirect(appUrl, safeReturnTo, "state_user_mismatch");
     }
 
     await requireOrgRole(state.orgId, [MembershipRole.owner, MembershipRole.admin]);
 
     if (parsed.error) {
-      return buildRedirect(request.url, safeReturnTo, "google_denied");
+      return buildRedirect(appUrl, safeReturnTo, "google_denied");
     }
 
     if (!parsed.code) {
-      return buildRedirect(request.url, safeReturnTo, "missing_code");
+      return buildRedirect(appUrl, safeReturnTo, "missing_code");
     }
 
     await finalizeGoogleCallback({
@@ -60,7 +61,7 @@ export async function GET(request: Request) {
       code: parsed.code
     });
 
-    return buildRedirect(request.url, safeReturnTo);
+    return buildRedirect(appUrl, safeReturnTo);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown callback error";
     console.error("[google-callback]", message);
@@ -77,6 +78,6 @@ export async function GET(request: Request) {
       errorCode = "forbidden";
     }
 
-    return buildRedirect(request.url, safeReturnTo, errorCode);
+    return buildRedirect(appUrl, safeReturnTo, errorCode);
   }
 }
