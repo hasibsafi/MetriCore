@@ -6,14 +6,12 @@ import { passwordResetRequestSchema } from "../../src/lib/validators/auth";
 export function ForgotPasswordForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [resetUrl, setResetUrl] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
-    setResetUrl(null);
 
     const formData = new FormData(event.currentTarget);
     const payload = {
@@ -36,7 +34,7 @@ export function ForgotPasswordForm() {
       body: JSON.stringify(parsed.data)
     });
 
-    const body = (await response.json()) as { message?: string; resetUrl?: string };
+    const body = (await response.json()) as { message?: string };
     setIsPending(false);
 
     if (!response.ok) {
@@ -45,9 +43,6 @@ export function ForgotPasswordForm() {
     }
 
     setSuccessMessage(body.message ?? "If an account exists, a reset link has been sent.");
-    if (body.resetUrl) {
-      setResetUrl(body.resetUrl);
-    }
   }
 
   return (
@@ -64,11 +59,6 @@ export function ForgotPasswordForm() {
       {successMessage && (
         <div className="mt-4 space-y-2 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
           <p>{successMessage}</p>
-          {resetUrl && (
-            <a className="font-medium text-emerald-900 underline" href={resetUrl}>
-              Open reset link
-            </a>
-          )}
         </div>
       )}
 
