@@ -62,6 +62,9 @@ export function SignUpForm() {
     <div className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
       <h1 className="text-xl font-semibold text-slate-900">Create account</h1>
       <p className="mt-1 text-sm text-slate-600">Set up your portal login using email and password.</p>
+      <a className="mt-2 inline-block text-xs font-medium text-slate-900 underline" href="/">
+        Back to homepage
+      </a>
 
       {errorMessage && (
         <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
