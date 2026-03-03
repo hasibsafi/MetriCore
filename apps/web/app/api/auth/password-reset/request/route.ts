@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const parsed = passwordResetRequestSchema.parse(payload);
 
     const requestUrl = new URL(request.url);
-    const appUrl = process.env.APP_URL ?? requestUrl.origin;
+    const appUrl = process.env.APP_URL ?? process.env.NEXTAUTH_URL ?? requestUrl.origin;
 
     const result = await requestPasswordReset({
       email: parsed.email,
