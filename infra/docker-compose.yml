@@ -32,6 +32,8 @@ services:
       context: ..
       dockerfile: apps/web/Dockerfile
     restart: unless-stopped
+    env_file:
+      - .env
     ports:
       - "3002:3000"
     environment:
@@ -61,6 +63,8 @@ services:
       context: ..
       dockerfile: apps/worker/Dockerfile
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/intoku
       REDIS_URL: redis://redis:6379
