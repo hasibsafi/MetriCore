@@ -39,16 +39,6 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/intoku
       REDIS_URL: redis://redis:6379
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
-      AUTH_SECRET: ${AUTH_SECRET:-}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      GOOGLE_INTEGRATION_CLIENT_ID: ${GOOGLE_INTEGRATION_CLIENT_ID:-}
-      GOOGLE_INTEGRATION_CLIENT_SECRET: ${GOOGLE_INTEGRATION_CLIENT_SECRET:-}
-      GOOGLE_OAUTH_STATE_SECRET: ${GOOGLE_OAUTH_STATE_SECRET:-}
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
-      APP_URL: ${APP_URL:-http://localhost:3000}
     depends_on:
       postgres:
         condition: service_healthy
@@ -68,10 +58,6 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/intoku
       REDIS_URL: redis://redis:6379
-      PAGESPEED_API_KEY: ${PAGESPEED_API_KEY:-}
-      GOOGLE_INTEGRATION_CLIENT_ID: ${GOOGLE_INTEGRATION_CLIENT_ID:-}
-      GOOGLE_INTEGRATION_CLIENT_SECRET: ${GOOGLE_INTEGRATION_CLIENT_SECRET:-}
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy
