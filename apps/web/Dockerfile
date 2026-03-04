@@ -15,8 +15,6 @@ FROM node:20-alpine AS builder
 WORKDIR /workspace
 
 COPY --from=deps /workspace/node_modules ./node_modules
-COPY --from=deps /workspace/apps/web/node_modules ./apps/web/node_modules
-COPY --from=deps /workspace/packages/shared/node_modules ./packages/shared/node_modules
 COPY . .
 
 # Generate Prisma client
