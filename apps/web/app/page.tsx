@@ -1,3 +1,7 @@
+import Image from "next/image";
+import trafficImg from "../src/assets/images/traffic-overview.jpg";
+import searchImg from "../src/assets/images/search-performance.jpg";
+
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -5,6 +9,7 @@ export default function HomePage() {
         <header className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
           <div>
             <div className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/favicon-96x96.png" alt="MetriCore logo" className="h-9 w-9" />
               <div>
                 <p className="text-sm font-semibold text-slate-900">MetriCore</p>
@@ -52,10 +57,13 @@ export default function HomePage() {
               <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700">30d</span>
             </div>
             <div className="mt-4 h-[260px] overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-              <img
-                src="/assets/images/google%20traffic%20analytics.jpg"
+              <Image
+                src={trafficImg}
                 alt="Traffic overview preview"
                 className="h-full w-full object-cover"
+                placeholder="blur"
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
           </div>
@@ -80,10 +88,12 @@ export default function HomePage() {
             <p className="text-sm font-semibold text-slate-900">Search performance</p>
             <p className="text-xs text-slate-500">Clicks and impressions</p>
             <div className="mt-4 h-[240px] overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-              <img
-                src="/assets/images/google%20search%20analytics.avif"
+              <Image
+                src={searchImg}
                 alt="Search performance preview"
                 className="h-full w-full object-cover"
+                placeholder="blur"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
           </div>

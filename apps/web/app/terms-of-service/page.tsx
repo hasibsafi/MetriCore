@@ -37,7 +37,7 @@ export default function TermsOfServicePage() {
         <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
           <h2 className="text-lg font-semibold">Service Availability</h2>
           <p className="text-sm text-slate-600">
-            We strive to keep MetriCore available, but the service is provided "as is" and may be interrupted for
+            We strive to keep MetriCore available, but the service is provided &ldquo;as is&rdquo; and may be interrupted for
             maintenance, updates, or unforeseen issues.
           </p>
         </section>

@@ -39,7 +39,7 @@ export async function upsertResult(input: UpsertPageSpeedResultInput) {
       desktopFcpMs: input.desktopFcpMs,
       desktopTtfbMs: input.desktopTtfbMs,
       rawJson: input.rawJson,
-      rawJsonDesktop: input.rawJsonDesktop
+      rawJsonDesktop: input.rawJsonDesktop ?? Prisma.JsonNull
     },
     create: {
       orgId: input.orgId,
@@ -57,7 +57,7 @@ export async function upsertResult(input: UpsertPageSpeedResultInput) {
       desktopFcpMs: input.desktopFcpMs,
       desktopTtfbMs: input.desktopTtfbMs,
       rawJson: input.rawJson,
-      rawJsonDesktop: input.rawJsonDesktop
+      rawJsonDesktop: input.rawJsonDesktop ?? Prisma.JsonNull
     }
   });
 }
