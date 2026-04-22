@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MetriCore",
-  description: "MetriCore client portal",
+  title: "MetriCore — Site health, traffic, and search in one view",
+  description:
+    "Track health, traffic, and search impact without jumping between tools.",
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -15,8 +16,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-        <body>{children}</body>
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var m=localStorage.getItem('mc-theme-manual')==='1';var s=localStorage.getItem('mc-theme');var t=m&&s==='light'?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}"
+          }}
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

@@ -2,10 +2,385 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =============================================================
+   MetriCore Design Tokens
+   Derived from the MetriCore Next.js app (Tailwind-based).
+   Primary UI color: sky (#0ea5e9). Neutrals: slate.
+   Brand mark (logo): coral red (#ef4444) - used on favicon only.
+   ============================================================= */
+
 :root {
+  /* ----------------------------------------------------------
+     COLOR - Primary (sky) - used for CTAs, active nav, charts
+     ---------------------------------------------------------- */
+  --sky-50: #f0f9ff;
+  --sky-100: #e0f2fe;
+  --sky-200: #bae6fd;
+  --sky-300: #7dd3fc;
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9; /* primary action */
+  --sky-600: #0284c7; /* primary hover */
+  --sky-700: #0369a1; /* primary text on light bg */
+
+  /* ----------------------------------------------------------
+     COLOR - Neutrals (slate)
+     ---------------------------------------------------------- */
+  --slate-50: #f8fafc; /* app bg */
+  --slate-100: #f1f5f9; /* subtle bg, input bg */
+  --slate-200: #e2e8f0; /* borders, chart grid */
+  --slate-300: #cbd5e1; /* input borders, disabled */
+  --slate-400: #94a3b8; /* placeholder */
+  --slate-500: #64748b; /* tertiary text, muted */
+  --slate-600: #475569; /* secondary text */
+  --slate-700: #334155; /* body text strong */
+  --slate-800: #1e293b;
+  --slate-900: #0f172a; /* headings */
+
+  /* ----------------------------------------------------------
+     COLOR - Semantic (status)
+     ---------------------------------------------------------- */
+  --success-bg: #ecfdf5; /* emerald-50 */
+  --success-fg: #047857; /* emerald-700 */
+  --success-100: #d1fae5; /* emerald-100 */
+  --success-600: #059669; /* emerald-600 */
+
+  --warning-bg: #fffbeb; /* amber-50 */
+  --warning-fg: #b45309; /* amber-700 */
+
+  --danger-bg: #fef2f2; /* red-50 */
+  --danger-fg: #b91c1c; /* red-700 */
+  --danger-500: #ef4444; /* red-500 - brand mark color */
+  --danger-600: #dc2626;
+
+  /* ----------------------------------------------------------
+     COLOR - Semantic aliases (prefer these in components)
+     ---------------------------------------------------------- */
+  --bg-app: var(--slate-50);
+  --bg-surface: #ffffff;
+  --bg-muted: var(--slate-100);
+  --bg-subtle: var(--slate-50);
+
+  --fg-primary: var(--slate-900); /* headings */
+  --fg-body: var(--slate-700); /* body */
+  --fg-secondary: var(--slate-600); /* secondary */
+  --fg-muted: var(--slate-500); /* muted / captions */
+  --fg-placeholder: var(--slate-400);
+  --fg-disabled: var(--slate-400);
+  --fg-on-primary: #ffffff;
+
+  --border-default: var(--slate-200);
+  --border-strong: var(--slate-300);
+  --border-focus: var(--sky-300);
+  --border-active: var(--sky-200);
+
+  --accent: var(--sky-500);
+  --accent-hover: var(--sky-600);
+  --accent-text: var(--sky-700);
+  --accent-bg: var(--sky-50);
+
+  /* Chart colors (from health/analytics charts) */
+  --chart-1: var(--sky-500); /* primary series */
+  --chart-2: var(--sky-400); /* secondary series */
+  --chart-3: var(--sky-300); /* tertiary series */
+  --chart-grid: var(--slate-200);
+  --chart-axis: var(--slate-500);
+
+  /* ----------------------------------------------------------
+     TYPE - Font stack
+     MetriCore uses the browser/OS default sans-serif
+     (Tailwind's default font-sans). No custom webfonts.
+     ---------------------------------------------------------- */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+  /* Sizes (px at 16px root) - matches Tailwind scale used in-code */
+  --text-xs: 12px; /* captions, labels, pills */
+  --text-sm: 14px; /* body default, form labels, nav */
+  --text-base: 16px; /* body large */
+  --text-lg: 18px;
+  --text-xl: 20px; /* metric values */
+  --text-2xl: 24px; /* page h1 */
+  --text-3xl: 28px; /* marketing h1 (mobile) */
+  --text-4xl: 36px; /* marketing h1 (desktop) */
+
+  /* Weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* Line heights */
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  /* Letter spacing */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+  --tracking-caps: 0.3em; /* uppercase eyebrows on marketing */
+
+  /* ----------------------------------------------------------
+     SPACING - 4px base grid (Tailwind scale)
+     ---------------------------------------------------------- */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ----------------------------------------------------------
+     RADII - rounded-[10px] on buttons/inputs is the signature
+     ---------------------------------------------------------- */
+  --radius-sm: 8px; /* small inner pills */
+  --radius-md: 10px; /* buttons, inputs, nav items - signature */
+  --radius-lg: 12px; /* inner cards, chart tiles */
+  --radius-xl: 16px; /* cards / modals (rounded-2xl) */
+  --radius-full: 9999px; /* pills, badges, avatars */
+
+  /* ----------------------------------------------------------
+     SHADOW - one elevation, very soft
+     MetriCore uses a single signature card shadow everywhere:
+     0 4px 12px rgba(0,0,0,0.04)  (plus native "shadow-sm" on topbar)
+     ---------------------------------------------------------- */
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-focus-ring: 0 0 0 2px var(--sky-300);
+
+  /* ----------------------------------------------------------
+     LAYOUT
+     ---------------------------------------------------------- */
+  --sidebar-width: 260px;
+  --sidebar-width-compact: 72px; /* md: tablet collapsed state */
+  --topbar-height: 64px;
+  --container-max: 1152px; /* max-w-6xl */
+  --content-px-mobile: 16px;
+  --content-px-desktop: 32px;
+
+  /* ----------------------------------------------------------
+     MOTION
+     ---------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 320ms;
+}
+
+/* ================================================================
+   SEMANTIC ELEMENT STYLES
+   Apply MetriCore look to plain HTML tags. These mirror what the
+   Next.js app produces via Tailwind utility classes.
+   ================================================================ */
+
+html,
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-body);
+  background: var(--bg-surface);
   color-scheme: light;
 }
 
+h1 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--fg-primary);
+  letter-spacing: var(--tracking-tight);
+}
+
+h2 {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--fg-primary);
+}
+
+h3 {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--fg-primary);
+}
+
+p {
+  color: var(--fg-body);
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+/* Utility classes mirroring app conventions */
+.mc-eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.mc-caption {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+.mc-label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+.mc-metric-value {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  color: var(--fg-primary);
+}
+
+.mc-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5);
+}
+
+.mc-card-inner {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+:root {
+  --topbar-bg: rgba(255, 255, 255, 0);
+  --topbar-bg-scrolled: rgba(255, 255, 255, 0.85);
+  --hero-bg-glow-a: rgba(186, 230, 253, 0.35);
+  --hero-bg-glow-b: rgba(224, 242, 254, 0.5);
+  --hero-grid: rgba(15, 23, 42, 0.04);
+  --cta-bg: linear-gradient(180deg, var(--sky-50) 0%, var(--bg-surface) 100%);
+}
+
+html[data-theme="dark"] {
+  /* Palette swap */
+  --bg-app: #0b1220;
+  --bg-surface: #0f172a;
+  --bg-muted: #1e293b;
+  --bg-subtle: #0b1220;
+
+  --fg-primary: #f1f5f9;
+  --fg-body: #cbd5e1;
+  --fg-secondary: #94a3b8;
+  --fg-muted: #64748b;
+  --fg-placeholder: #64748b;
+
+  --border-default: #1e293b;
+  --border-strong: #334155;
+  --border-active: #0369a1;
+
+  --accent-text: #7dd3fc;
+  --accent-bg: rgba(14, 165, 233, 0.1);
+
+  --chart-grid: #1e293b;
+  --chart-axis: #64748b;
+
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --success-fg: #6ee7b7;
+  --warning-bg: rgba(245, 158, 11, 0.12);
+  --warning-fg: #fcd34d;
+  --danger-bg: rgba(239, 68, 68, 0.12);
+  --danger-fg: #fca5a5;
+
+  --topbar-bg: rgba(11, 18, 32, 0);
+  --topbar-bg-scrolled: rgba(11, 18, 32, 0.85);
+  --hero-bg-glow-a: rgba(14, 165, 233, 0.15);
+  --hero-bg-glow-b: rgba(56, 189, 248, 0.1);
+  --hero-grid: rgba(226, 232, 240, 0.04);
+  --cta-bg: linear-gradient(
+    180deg,
+    rgba(14, 165, 233, 0.08) 0%,
+    var(--bg-surface) 100%
+  );
+}
+
+html,
 body {
-  @apply bg-white text-slate-900;
+  background: var(--bg-surface);
+  color: var(--fg-body);
+  margin: 0;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+}
+
+.mc-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@keyframes mc-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .mc-topnav {
+    display: none !important;
+  }
+}
+
+/* reduce heavy preview height on mobile */
+@media (max-width: 720px) {
+  .mc-dash-preview {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+
+  .mc-dash-preview > aside {
+    display: none;
+  }
+}
+
+::selection {
+  background: var(--sky-200);
+  color: var(--sky-700);
+}
+
+html[data-theme="dark"] ::selection {
+  background: var(--sky-700);
+  color: var(--sky-100);
 }
