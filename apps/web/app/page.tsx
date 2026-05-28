@@ -16,7 +16,7 @@ export default function HomePage() {
       <Section
         id="product"
         eyebrow="The product"
-        title="Everything you need to manage site performance — in one view."
+        title="Everything you need to manage site performance in one view."
         subtitle="MetriCore is a multi-tenant dashboard built for teams juggling dozens of client sites. Connect once, monitor continuously, act on what matters."
         style={{ background: "var(--bg-subtle)" }}
       >
@@ -26,7 +26,7 @@ export default function HomePage() {
       <Section
         id="metrics"
         eyebrow="Metrics we track"
-        title="GA4, Search Console, and PageSpeed — stitched together."
+        title="GA4, Search Console, and PageSpeed stitched together."
         subtitle="Every data source you already use, normalized and compared. No spreadsheet gymnastics, no dashboards of dashboards."
       >
         <MetricsBreakdown />

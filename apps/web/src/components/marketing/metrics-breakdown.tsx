@@ -133,7 +133,7 @@ export function MetricsBreakdown() {
             <div style={pillStyle()}>GA4</div>
             <h3 style={cardTitleStyle}>Analytics trends</h3>
             <p style={cardSubStyle}>
-              Sessions, users, and engaged sessions — compared against the previous period.
+              Sessions, users, and engaged sessions compared against the previous period.
             </p>
           </div>
           <DeltaPill value={15.8} />

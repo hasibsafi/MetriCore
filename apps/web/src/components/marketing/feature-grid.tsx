@@ -69,7 +69,7 @@ const FEATURE_ITEMS: FeatureCardProps[] = [
   {
     icon: Icons.Search,
     title: "Search Console signal",
-    body: "Clicks, impressions, CTR, and position trends — plus top queries and pages side-by-side."
+    body: "Clicks, impressions, CTR, and position trends plus top queries and pages side-by-side."
   },
   {
     icon: Icons.Recs,
